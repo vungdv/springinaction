@@ -35,7 +35,7 @@ public class DesignBunPhoController {
     }
     @ModelAttribute
     public void addIngredientsToModel(Model model){
-        System.out.println("addIngredientsToModel");
+        log.info("addIngredientsToModel");
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
                 new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
@@ -57,17 +57,17 @@ public class DesignBunPhoController {
     }
     @ModelAttribute(name = "bunPhoOrder")
     public BunPhoOrder bunPhoOrder(){
-        System.out.println("bunPhoOrder");
+        log.info("bunPhoOrder");
         return new BunPhoOrder();
     }
     @ModelAttribute(name = "bunPho")
     public BunPho bunPho(){
-        System.out.println("bunPho");
+        log.info("bunPho");
         return new BunPho();
     }
     @ModelAttribute(name = "message")
     public String getMessage(){
-        System.out.println("getMessage");
+        log.info("getMessage");
         return "BunPho List";
     }
     private Iterable<Ingredient> filterByType(List<Ingredient> ingredients, Ingredient.Type type) {
