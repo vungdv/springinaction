@@ -1,5 +1,6 @@
 package com.vungdo.tacocloudmaven.web;
 
+import com.vungdo.tacocloudmaven.data.IngredientRepository;
 import com.vungdo.tacocloudmaven.domain.model.BunPho;
 import com.vungdo.tacocloudmaven.domain.model.BunPhoOrder;
 import com.vungdo.tacocloudmaven.domain.model.Ingredient;
@@ -10,15 +11,25 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Slf4j // Lombok annotation to generate a logger of SLF4J in this class
 @RequestMapping("/design")
 @SessionAttributes("bunPhoOrder")
 @Controller
 public class DesignBunPhoController {
+    private IngredientRepository ingredientRepository;
+
+    public DesignBunPhoController(IngredientRepository ingredientRepository) {
+        this.ingredientRepository = ingredientRepository;
+    }
+
     @GetMapping
     public String showDesignForm(){
         return "design";
@@ -36,24 +47,13 @@ public class DesignBunPhoController {
     @ModelAttribute
     public void addIngredientsToModel(Model model){
         log.info("addIngredientsToModel");
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("GRBF", "Ground Beef", Ingredient.Type.PROTEIN),
-                new Ingredient("CARN", "Carnitas", Ingredient.Type.PROTEIN),
-                new Ingredient("TMTO", "Diced Tomatoes", Ingredient.Type.VEGGIES),
-                new Ingredient("LETC", "Lettuce", Ingredient.Type.VEGGIES),
-                new Ingredient("CHED", "Cheddar", Ingredient.Type.CHEESE),
-                new Ingredient("JACK", "Monterrey Jack", Ingredient.Type.CHEESE),
-                new Ingredient("SLSA", "Salsa", Ingredient.Type.SAUCE),
-                new Ingredient("SRCR", "Sour Cream", Ingredient.Type.SAUCE)
-        );
-
-        Ingredient.Type[] types = Ingredient.Type.values();
-        for (Ingredient.Type type : types) {
-            model.addAttribute(type.toString().toLowerCase(),
-                    filterByType(ingredients, type));
+        Stream<Ingredient> ingredientStream = StreamSupport.stream(ingredientRepository.findAll().spliterator(), false);
+        Map<Ingredient.Type, List<Ingredient>> typeListMap =
+                ingredientStream.collect(Collectors.groupingBy(Ingredient::getType));
+        for (Ingredient.Type type : typeListMap.keySet()) {
+            model.addAttribute(type.toString().toLowerCase(), typeListMap.get(type));
         }
+        log.info("size: " + typeListMap.size());
     }
     @ModelAttribute(name = "bunPhoOrder")
     public BunPhoOrder bunPhoOrder(){

@@ -1,20 +1,21 @@
 package com.vungdo.tacocloudmaven.domain.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Table
+@Entity
 public class BunPhoOrder {
     @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
@@ -33,6 +34,7 @@ public class BunPhoOrder {
     private String ccExpiration;
     @Digits(integer=3, fraction=0, message="Invalid CVV")
     private String ccCVV;
+    @OneToMany(cascade = CascadeType.ALL)
     private List<BunPho> bunPhos = new ArrayList<>();
     public void addBunPho(BunPho bunPho) {
         this.bunPhos.add(bunPho);
