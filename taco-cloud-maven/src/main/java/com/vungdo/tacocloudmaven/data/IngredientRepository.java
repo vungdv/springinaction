@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface IngredientRepository extends CrudRepository<Ingredient, String> {
-//    Optional<List<Ingredient>> findByType(Ingredient.Type type);
+    Optional<List<Ingredient>> findByType(Ingredient.Type type);
 }

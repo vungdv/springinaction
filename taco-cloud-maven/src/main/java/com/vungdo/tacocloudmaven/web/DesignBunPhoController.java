@@ -11,10 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -43,6 +40,13 @@ public class DesignBunPhoController {
         log.info("Processing bunpho: " + bunpho);
         bunPhoOrder.addBunPho(bunpho);
         return "redirect:/orders/current";
+    }
+    @ModelAttribute
+    public void addCustomFunctionToModel(Model model){
+        log.info("addCustomFunctionToModel");
+        Optional<List<Ingredient>> custom = ingredientRepository.findByType(Ingredient.Type.CHEESE);
+        model.addAttribute("customFunction", custom);
+        log.info("custom:" + custom);
     }
     @ModelAttribute
     public void addIngredientsToModel(Model model){
